@@ -33,7 +33,7 @@ jobs:
       uses: actions/cache@v2
       with:
         path: Libs
-        key: ${{ runner.os }}-libs-${{ hashFiles('JUCE.version') }}
+        key: ${{ runner.os }}-libs-${{ hashFiles('**/JUCE.version') }}
         restore-keys: ${{ runner.os }}-libs-
 
     - name: Configure CMake
