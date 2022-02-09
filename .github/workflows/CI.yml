@@ -1,0 +1,42 @@
+name: Continuous Integration
+
+# TODO: Cache the dependencies
+
+on:
+  push
+
+env:
+  BUILD_TYPE: Release
+
+# Jobs run in parallel by default
+jobs:
+  build_and_validate:
+    name: Build and test on ${{ runner.os }}
+  
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      # Don't cancel all in-progress jobs if any matrix job fails:
+      fail-fast: false
+      # Define a matrix of different job configurations:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem.
+    # NB! Because steps run in their own process, changes to environment variables are not preserved between steps.
+    steps:
+    
+    - name: Checkout code 
+      uses: actions/checkout@v2
+
+    - name: Configure CMake
+      # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
+      # `DCMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
+      run: cmake -B ${{github.workspace}}/Build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64
+
+    - name: Build
+      # Build your program with the given configuration
+      run: cmake --build ${{github.workspace}}/Build --config ${{env.BUILD_TYPE}}
+
+
+      
