@@ -11,7 +11,7 @@ env:
 # Jobs run in parallel by default
 jobs:
   build_and_validate:
-    name: Build and test on ${{ runner.os }}
+    name: Build and test on ${{ matrix.os }}
   
     runs-on: ${{ matrix.os }}
     
