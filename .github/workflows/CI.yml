@@ -32,7 +32,7 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
       # `DCMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
-      run: cmake -B ${{github.workspace}}/Build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES=arm64;x86_64
+      run: cmake -B ${{github.workspace}}/Build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 
     - name: Build
       # Build your program with the given configuration
