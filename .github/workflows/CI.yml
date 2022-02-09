@@ -7,6 +7,7 @@ on:
 
 env:
   BUILD_TYPE: Release
+  BUILD_DIR: ${{ github.workspace }}/Build
 
 # Jobs run in parallel by default
 jobs:
@@ -29,23 +30,35 @@ jobs:
     - name: Checkout code 
       uses: actions/checkout@v2
 
-    # NB! Using CMakeLists for the key doesn't work when tracking a branch..
+    # Use the Ccache compiler cache to speed up the clean build
+    - name: Invoke Ccache
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+    # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
+    # - cache won't be updated even if the remote branch had new commit and we had to
+    # fetch them.
+    # We could use the commit hash to always update the cache,
+    # or use the date hash to update it daily
+    # We could also extract dependency versions from CMakeLists mote cleanly
 
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
         path: Libs
-        key: ${{ runner.os }}-libs-${{ hashFiles('CMakeLists.txt') }}
-        restore-keys: ${{ runner.os }}-libs-
+        key: libs-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: libs-${{ runner.os }}-
 
     - name: Configure CMake
       # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
-      # `DCMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
-      run: cmake -B ${{github.workspace}}/Build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+      # `CMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
+      # `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` enable the Ccache compiler cache.
+      run: cmake -B ${{ env.BUILD_DIR }} -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build the project with the given configuration
-      run: cmake --build ${{github.workspace}}/Build --config ${{env.BUILD_TYPE}}
+      run: cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
 
 
       
