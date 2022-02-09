@@ -62,5 +62,7 @@ jobs:
       # Build the project with the given configuration
       run: cmake --build ${{ env.BUILD_DIR }} --config ${{ env.BUILD_TYPE }}
 
+      # Silly test
+
 
       
