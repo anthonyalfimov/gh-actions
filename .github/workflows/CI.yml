@@ -43,7 +43,10 @@ jobs:
 
     - name: Record JUCE cache identifier
       working-directory: ${{github.workspace}}/Libs/JUCE
-      run: git rev-parse HEAD > ../JUCE.version
+      shell: bash
+      run: |
+        git rev-parse HEAD > ../JUCE.version
+        cat ../JUCE.version
 
     - name: Build
       # Build the project with the given configuration
