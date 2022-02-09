@@ -7,7 +7,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  BUILD_DIR: ${{ github.workspace }}/Build
+  BUILD_DIR: Build
 
 # Jobs run in parallel by default
 jobs:
@@ -23,15 +23,17 @@ jobs:
       matrix:
         os: [macos-latest, windows-latest]
 
-    # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem.
-    # NB! Because steps run in their own process, changes to environment variables are not preserved between steps.
+    # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
+    # NB! Because steps run in their own process, changes to environment variables are not preserved between steps
     steps:
     
     - name: Checkout code 
       uses: actions/checkout@v2
 
     # Use the Ccache compiler cache to speed up the clean build
+    # Note: ccache-action does not support Windows at the moment
     - name: Invoke Ccache
+      if: runner.os != 'Windows'
       uses: hendrikmuhs/ccache-action@v1
       with:
         key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
