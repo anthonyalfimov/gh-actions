@@ -59,7 +59,5 @@ jobs:
       # Build the project with the given configuration
       run: cmake --build Build --config ${{ env.BUILD_TYPE }}
 
-    # Run again
-
 
       
