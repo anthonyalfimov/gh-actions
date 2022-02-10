@@ -35,6 +35,12 @@ jobs:
       with:
         key: xc3-${{ runner.os }}-${{ env.BUILD_TYPE }}
 
+    - name: Bootstrap Ccache
+      if: runner.os != 'Windows'
+      run: |
+        ln -s ccache /usr/local/bin/clang
+        ln -s ccache /usr/local/bin/clang++
+
     # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
     # - cache won't be updated even if the remote branch had new commit and we had to
     # fetch them.
