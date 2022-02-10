@@ -28,12 +28,18 @@ jobs:
       uses: actions/checkout@v2
 
     # Use the Ccache compiler cache to speed up the clean build
-    # Note: ccache-action does not support Windows at the moment
-    # - name: Invoke Ccache
-    #   if: runner.os != 'Windows'
-    #   uses: hendrikmuhs/ccache-action@v1
-    #   with:
-    #     key: xc-${{ runner.os }}-${{ env.BUILD_TYPE }}
+    Note: ccache-action does not support Windows at the moment
+    - name: Install Ccache
+      if: runner.os != 'Windows'
+      uses: hendrikmuhs/ccache-action@v1
+      with:
+        key: xc2-${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+    - name: Bootstrap Ccache
+      if: runner.os != 'Windows'
+      run: |
+        ln -s ccache /usr/bin/clang
+        ln -s ccache /usr/bin/clang++
 
     # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
     # - cache won't be updated even if the remote branch had new commit and we had to
