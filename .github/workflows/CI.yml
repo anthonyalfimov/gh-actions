@@ -38,6 +38,7 @@ jobs:
     - name: Bootstrap Ccache
       if: runner.os != 'Windows'
       run: |
+        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
         ln -s ccache /usr/local/bin/clang
         ln -s ccache /usr/local/bin/clang++
 
