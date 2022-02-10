@@ -67,7 +67,7 @@ jobs:
 
     - name: Build (macOS, Xcode, ccache)
       # Build the project with the given configuration
-      run: xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -project PluginTemplate.xcodeproj build -target ALL_BUILD -parallelizeTargets -configuration ${{ env.BUILD_TYPE }}
+      run: xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -project Build/PluginTemplate.xcodeproj build -target ALL_BUILD -parallelizeTargets -configuration Release -hideShellScriptEnvironment
 
 
       
