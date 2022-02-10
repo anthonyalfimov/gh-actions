@@ -24,3 +24,6 @@ jobs:
     
     - name: Look for clang
       run: which clang
+      
+    - name: Look for clang++
+      run: which clang++
