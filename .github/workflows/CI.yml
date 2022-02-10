@@ -61,9 +61,13 @@ jobs:
       # `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` enable the Ccache compiler cache.
       run: cmake -B Build -G Xcode -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64"
 
-    - name: Build
+#    - name: Build
       # Build the project with the given configuration
-      run: cmake --build Build --config ${{ env.BUILD_TYPE }}
+#      run: cmake --build Build --config ${{ env.BUILD_TYPE }}
+
+    - name: Build (macOS, Xcode, ccache)
+      # Build the project with the given configuration
+      run: xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -project PluginTemplate.xcodeproj build -target ALL_BUILD -parallelizeTargets -configuration ${{ env.BUILD_TYPE }}
 
 
       
