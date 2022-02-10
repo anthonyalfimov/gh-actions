@@ -29,18 +29,11 @@ jobs:
 
     # Use the Ccache compiler cache to speed up the clean build
     # Note: ccache-action does not support Windows at the moment
-    - name: Install Ccache
+    - name: Enable Ccache
       if: runner.os != 'Windows'
       uses: hendrikmuhs/ccache-action@v1
       with:
-        key: xc2-${{ runner.os }}-${{ env.BUILD_TYPE }}
-
-    - name: Bootstrap Ccache
-      if: runner.os != 'Windows'
-      run: |
-        export PATH="/usr/lib/ccache:/usr/local/opt/ccache/libexec:$PATH"
-        ln -s ccache /usr/local/bin/clang
-        ln -s ccache /usr/local/bin/clang++
+        key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
 
     # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
     # - cache won't be updated even if the remote branch had new commit and we had to
@@ -53,14 +46,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: Libs
-        key: xc-libs-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
-        restore-keys: xc-libs-${{ runner.os }}-
+        key: libs-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: libs-${{ runner.os }}-
 
     - name: Configure CMake
       # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
       # `CMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
       # `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` enable the Ccache compiler cache.
-      run: cmake -B Build -G Xcode -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64"  #-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+      run: cmake -B Build -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64"  #-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build the project with the given configuration
