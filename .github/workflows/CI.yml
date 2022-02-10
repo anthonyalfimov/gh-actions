@@ -53,7 +53,7 @@ jobs:
       # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
       # `CMAKE_OSX_ARCHITECTURES` is required to build a universal binary on macOS.
       # `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` enable the Ccache compiler cache.
-      run: cmake -B Build -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64"  #-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
+      run: cmake -B Build -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64" -D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache
 
     - name: Build
       # Build the project with the given configuration
