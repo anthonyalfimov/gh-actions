@@ -2,7 +2,7 @@ name: Validation
 
 on:
   push:
-    branches: [main, dev]
+#    branches: [main, dev]
 
   # By default, only `opened`, `synchronize`, and `reopened` activity types will trigger the workflow
   pull_request:
