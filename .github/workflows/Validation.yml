@@ -76,4 +76,6 @@ jobs:
       run: |
         curl -LsS "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
         unzip pluginval
-        pluginval.app/Contents/MacOS/pluginval --validate-in-process --validate PluginTemplate_artefacts/Release/AU/Plugin\ Template.component
+        ls PluginTemplate_artefacts/Release/AU/
+        ls PluginTemplate_artefacts/Release/VST3/
+        pluginval.app/Contents/MacOS/pluginval --validate-in-process --validate "~/Library/Audio/Plug-Ins/Components/Plugin Template.component"
