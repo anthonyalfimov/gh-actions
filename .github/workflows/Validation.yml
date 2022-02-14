@@ -5,7 +5,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  STRICTNESS_LEVEL: 5     # Strictness level for pluginval validation
+  STRICTNESS_LEVEL: 10    # Strictness level for pluginval validation
 
 # Jobs run in parallel by default
 jobs:
@@ -81,4 +81,4 @@ jobs:
       run: |
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
-        ${{ matrix.config.pluginval_path }} --validate "*_artefacts/Release/VST3/*.vst3"
+        ${{ matrix.config.pluginval_path }} --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
