@@ -1,0 +1,73 @@
+name: Validation
+
+on:
+  push
+
+env:
+  BUILD_TYPE: Release
+
+# Jobs run in parallel by default
+jobs:
+  build_and_validate:
+    name: Build and test on ${{ matrix.os }}
+  
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      # Don't cancel all in-progress jobs if any matrix job fails:
+      fail-fast: false
+      # Define a matrix of job configurations:
+      matrix:
+        os: [macos-latest, windows-latest]
+
+    # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
+    # NB! Because steps run in their own process, changes to environment variables are not preserved between steps
+    steps:
+    
+    - name: Checkout code 
+      uses: actions/checkout@v2
+
+    # Use the buildcache compiler cache to speed up the build
+    # TODO: configure buildcache to work on Windows
+    - name: Enable buildcache
+#     if: runner.os != 'Windows'
+      uses: mikehardy/buildcache-action@v1
+      with:
+        cache_key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+    # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
+    # - cache won't be updated even if the remote branch had new commit and we had to
+    # fetch them.
+    # We could use the commit hash to always update the cache,
+    # or use the date hash to update it daily
+    # We could also extract dependency versions from CMakeLists mote cleanly
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: Libs
+        key: libs-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: libs-${{ runner.os }}-
+
+    # Use Xcode generator on MacOS for faster builds
+    - name: Configure CMake (MacOS)
+      if: runner.os == 'MacOS'
+      # Configure CMake in a 'Build' subdirectory. `CMAKE_OSX_ARCHITECTURES` is required to build a universal binary.
+      run: cmake -B Build -G Xcode -D CMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+
+    # Use default generator if not on MacOS
+    - name: Configure CMake
+      if: runner.os != 'MacOS'
+      # Configure CMake in a 'Build' subdirectory. `CMAKE_BUILD_TYPE` is required for single-configuration generators like make.
+      # `CMAKE_C_COMPILER_LAUNCHER` and `CMAKE_CXX_COMPILER_LAUNCHER` enable the Ccache compiler cache.
+      run: cmake -B Build -D CMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -D CMAKE_C_COMPILER_LAUNCHER=buildcache -D CMAKE_CXX_COMPILER_LAUNCHER=buildcache
+
+    - name: Build (MacOS)
+      if: runner.os == 'MacOS'
+      # Build the project with the given configuration
+      run: xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -project Build/PluginTemplate.xcodeproj build -target ALL_BUILD -parallelizeTargets -configuration ${{ env.BUILD_TYPE }} -hideShellScriptEnvironment
+
+    - name: Build
+      if: runner.os != 'MacOS'
+      # Build the project with the given configuration
+      run: cmake --build Build --config ${{ env.BUILD_TYPE }}
