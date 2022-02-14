@@ -5,7 +5,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  STRICTNESS_LEVEL: 6     # Strictness level for pluginval validation
+  STRICTNESS_LEVEL: 10    # Strictness level for pluginval validation
 
 # Jobs run in parallel by default
 jobs:
