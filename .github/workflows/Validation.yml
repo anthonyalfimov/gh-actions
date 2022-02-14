@@ -22,7 +22,7 @@ jobs:
         - {
             name: 'MacOS Latest',
             os: macos-latest,
-            gen: 'Xcode'
+            gen: 'Xcode',
             # Use Xcode generator for faster builds. Enable building a universal binary.
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force Xcode to use compilers from the PATH to enable buildcache
