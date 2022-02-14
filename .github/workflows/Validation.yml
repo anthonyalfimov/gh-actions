@@ -71,9 +71,9 @@ jobs:
       # Build the project with the given configuration.
       run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
 
-    # Issue with validating AU plugins from CLI: https://github.com/Tracktion/pluginval/issues/39
+    # Note: currently pluginval fails to validate AU plugins from CLI
+    # Details: https://github.com/Tracktion/pluginval/issues/39
     - name: Validate
-      #if: runner.os == 'MacOS'
       shell: bash
       working-directory: Build
       env:
