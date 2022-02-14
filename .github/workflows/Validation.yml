@@ -79,6 +79,6 @@ jobs:
       env:
         VALIDATE_IN_PROCESS: true
       run: |
-        curl -L ${{ matrix.config.pluginval_link }} -o pluginval.zip
-        unzip pluginval
+        curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
+        unzip -q pluginval
         ${{ matrix.config.pluginval_path }} --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
