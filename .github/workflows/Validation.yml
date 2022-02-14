@@ -27,12 +27,14 @@ jobs:
             # Use Xcode generator for faster builds. Enable building a universal binary.
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force Xcode to use compilers from the PATH to enable buildcache
-            cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -quiet"
+            cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -quiet",
+            pluginval_path: "pluginval.app/Contents/MacOS/pluginval"
           }
         - {
             name: 'Windows Latest',
             os: windows-latest,
-            gen: 'MSVC'
+            gen: 'MSVC',
+            pluginval_path: "pluginval.exe"
           }
 
     # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
@@ -67,8 +69,10 @@ jobs:
       # Build the project with the given configuration.
       run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
 
-    - name: Validate (Mac)
-      if: runner.os == 'MacOS'
+    # Issue with validating AU plugins from CLI: https://github.com/Tracktion/pluginval/issues/39
+    - name: Validate
+      #if: runner.os == 'MacOS'
+      shell: bash
       working-directory: Build
       env:
         STRICTNESS_LEVEL: ${{ env.PLUGINVAL_LEVEL }}
@@ -76,4 +80,4 @@ jobs:
       run: |
         curl -LsS "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
         unzip -q pluginval
-        pluginval.app/Contents/MacOS/pluginval --validate-in-process --validate "PluginTemplate_artefacts/Release/AU/Plugin Template.component/Contents/MacOS/Plugin Template"
+        ${{ matrix.config.pluginval_path }} --validate-in-process --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
