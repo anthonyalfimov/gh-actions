@@ -22,12 +22,16 @@ jobs:
         - {
             name: 'MacOS Latest',
             os: macos-latest,
+            gen: 'Xcode'
+            # Use Xcode generator for faster builds. Enable building a universal binary.
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
+            # Force Xcode to use compilers from the PATH to enable buildcache
             cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++"
           }
         - {
             name: 'Windows Latest',
             os: windows-latest,
+            gen: 'MSVC'
           }
 
     # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
@@ -37,7 +41,7 @@ jobs:
     - name: Checkout code 
       uses: actions/checkout@v2
 
-    # Use the buildcache compiler cache to speed up the build
+    # Use the buildcache compiler cache to speed up builds
     # Note: currently we are not configuring buildcache to work on Windows
     # Details: https://github.com/mbitsnbites/buildcache/blob/master/doc/usage.md#using-with-visual-studio--msbuild
     - name: Enable buildcache
@@ -46,24 +50,18 @@ jobs:
       with:
         cache_key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
 
-    # NB! Using CMakeLists for the key doesn't entirely work when tracking a branch
-    # - cache won't be updated even if the remote branch had new commit and we had to
-    # fetch them.
-    # We could use the commit hash to always update the cache,
-    # or use the date hash to update it daily
-    # We could also extract dependency versions from CMakeLists mote cleanly
-
+    # Set up the dependency cache to be updated for every new commit
     - name: Cache dependencies
       uses: actions/cache@v2
       with:
         path: Libs
-        key: libs2-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
-        restore-keys: libs2-${{ runner.os }}-
+        key: libs-${{ runner.os }}-${{ matrix.config.gen }}-${{ github.sha }}
+        restore-keys: libs-${{ runner.os }}-${{ matrix.config.gen }}-
 
     - name: Configure CMake
       # Configure CMake in a 'Build' subdirectory.
       run: cmake -B Build ${{ matrix.config.cmake_config_flags }}
 
     - name: Build
-      # Build the project with the given configuration
+      # Build the project with the given configuration.
       run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
