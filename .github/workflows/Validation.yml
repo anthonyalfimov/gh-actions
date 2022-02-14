@@ -28,12 +28,14 @@ jobs:
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force Xcode to use compilers from the PATH to enable buildcache
             cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -quiet",
+            pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
             pluginval_path: "pluginval.app/Contents/MacOS/pluginval"
           }
         - {
             name: 'Windows Latest',
             os: windows-latest,
             gen: 'MSVC',
+            pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Windows.zip",
             pluginval_path: "pluginval.exe"
           }
 
@@ -78,6 +80,6 @@ jobs:
         STRICTNESS_LEVEL: ${{ env.PLUGINVAL_LEVEL }}
         #VALIDATE_IN_PROCESS: true
       run: |
-        curl -LsS "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
+        curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
         ${{ matrix.config.pluginval_path }} --validate-in-process --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
