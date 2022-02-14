@@ -81,4 +81,4 @@ jobs:
       run: |
         curl -L ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip pluginval
-        ${{ matrix.config.pluginval_path }} --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template1.vst3"
+        ${{ matrix.config.pluginval_path }} --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
