@@ -46,8 +46,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: Libs
-        key: libs-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
-        restore-keys: libs-${{ runner.os }}-
+        key: libs1-${{ runner.os }}-${{ hashFiles('CMakeLists.txt') }}
+        restore-keys: libs1-${{ runner.os }}-
 
     # Use Xcode generator on MacOS for faster builds
     - name: Configure CMake (MacOS)
