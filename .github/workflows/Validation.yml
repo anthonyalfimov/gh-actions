@@ -72,7 +72,7 @@ jobs:
 
     - name: Configure CMake
       # Configure CMake in a 'Build' subdirectory.
-      run: cmake -B Build ${{ matrix.config.cmake_config_flags }} -DJUCE_COPY_PLUGIN_AFTER_BUILD=ON
+      run: cmake -B Build ${{ matrix.config.cmake_config_flags }}
 
     - name: Build
       # Build the project with the given configuration.
