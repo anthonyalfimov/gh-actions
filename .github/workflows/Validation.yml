@@ -36,7 +36,7 @@ jobs:
             os: windows-latest,
             gen: 'MSVC',
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Windows.zip",
-            pluginval_path: "pluginval.exe"
+            pluginval_path: "./pluginval.exe"
           }
 
     # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
@@ -80,6 +80,6 @@ jobs:
         STRICTNESS_LEVEL: ${{ env.PLUGINVAL_LEVEL }}
         #VALIDATE_IN_PROCESS: true
       run: |
-        curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
-        unzip -q pluginval
+        curl -L ${{ matrix.config.pluginval_link }} -o pluginval.zip
+        unzip pluginval
         ${{ matrix.config.pluginval_path }} --validate-in-process --validate "PluginTemplate_artefacts/Release/VST3/Plugin Template.vst3"
