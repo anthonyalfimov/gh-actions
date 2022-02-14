@@ -5,7 +5,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  PLUGINVAL_LEVEL: 5    # Strictness level for pluginval validation
+  PLUGINVAL_LEVEL: 6    # Strictness level for pluginval validation
 
 # Jobs run in parallel by default
 jobs:
@@ -27,7 +27,7 @@ jobs:
             # Use Xcode generator for faster builds. Enable building a universal binary.
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force Xcode to use compilers from the PATH to enable buildcache
-            cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++"
+            cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -quiet"
           }
         - {
             name: 'Windows Latest',
@@ -74,6 +74,6 @@ jobs:
         STRICTNESS_LEVEL: ${{ env.PLUGINVAL_LEVEL }}
         VALIDATE_IN_PROCESS: true
       run: |
-        curl -L "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
+        curl -LsS "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip" -o pluginval.zip
         unzip pluginval
-        pluginval.app/Contents/MacOS/pluginval --validate "PluginTemplate_artefacts/Release/AU/Plugin Template.component" || exit 1
+        pluginval.app/Contents/MacOS/pluginval --validate "PluginTemplate_artefacts/Release/AU/Plugin\ Template.component" || exit 1
