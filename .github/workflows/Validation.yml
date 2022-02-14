@@ -1,7 +1,14 @@
 name: Validation
 
 on:
-  push
+  push:
+    branches: [main, dev]
+
+  # By default, only `opened`, `synchronize`, and `reopened` activity types will trigger the workflow
+  pull_request:
+
+  # Manual trigger
+  workflow_dispatch:
 
 env:
   BUILD_TYPE: Release
@@ -81,4 +88,4 @@ jobs:
       run: |
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
-        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
+        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3 *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component
