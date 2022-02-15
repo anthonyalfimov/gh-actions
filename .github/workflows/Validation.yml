@@ -88,4 +88,4 @@ jobs:
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
         shopt -s extglob
-        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/@(VST3/*.vst3|AU/*.component)
+        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/+(VST3/*.vst3|AU/*.component)
