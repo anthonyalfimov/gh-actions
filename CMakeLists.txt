@@ -59,7 +59,7 @@ FetchContent_MakeAvailable(juce)
 # Check the readme at `docs/CMake API.md` in the JUCE repo for the full list.
 
 juce_add_plugin("${PROJECT_NAME}"
-    FORMATS AU VST3 Standalone                  # The formats to build. Valid formats: Standalone Unity VST3 AU AUv3 AAX VST.
+    FORMATS AU VST3                             # The formats to build. Valid formats: Standalone Unity VST3 AU AUv3 AAX VST.
                                                 # AU and AUv3 plugins will only be enabled when building on macOS.
     PRODUCT_NAME "Plugin Template"              # The name of the final executable, which can differ from the target name.
     # PLUGIN_NAME                               # Name of the plugin that will be disabled in the DAW. Can differ from PRODUCT_NAME.
