@@ -164,19 +164,18 @@ set_target_properties("${PROJECT_NAME}" PROPERTIES FOLDER "")
 # IDEs:  Generate source groups that follow the organisation of source file directories.
 get_target_property(project_sources "${PROJECT_NAME}" SOURCES)
 
-### Take JuceHeader.h out of project_sources and handle it separately
-
+#   Take JuceHeader.h out of project_sources and handle it separately
 get_target_property(juce_library_code ${PROJECT_NAME} JUCE_GENERATED_SOURCES_DIRECTORY)
 set(juce_header "${juce_library_code}/JuceHeader.h")
+
 list(REMOVE_ITEM project_sources ${juce_header})
+
 source_group("JUCE Library Code" FILES "${juce_header}" "${juce_header}.rule")
 
-
+#   Generate source groups that follow the organisation of source file directories.
 source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
 
-
-### Binary Assets Source Group:
-
+#   Binary Assets Source Group:
 get_target_property(project_assets Assets SOURCES)
 
 foreach(project_asset ${project_assets})
