@@ -106,7 +106,7 @@ set_target_properties(${project_targets} PROPERTIES CXX_EXTENSIONS OFF)
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. The include path for this header will be automatically added to the target.
 
-# juce_generate_juce_header("${PROJECT_NAME}")
+juce_generate_juce_header("${PROJECT_NAME}")
 
 # Add the subdirectory with source files
 add_subdirectory(Source)
@@ -131,7 +131,9 @@ target_compile_definitions("${PROJECT_NAME}"
 # static library. These source files can be of any kind (wav data, images, fonts, icons etc.).
 # Conversion to binary-data will happen when your target is built.
 
-# juce_add_binary_data(Assets SOURCES ...)
+juce_add_binary_data(Assets
+    # HEADER_NAME BinaryAssets.h
+    SOURCES Assets/img.png)
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
@@ -139,7 +141,7 @@ target_compile_definitions("${PROJECT_NAME}"
 
 target_link_libraries("${PROJECT_NAME}"
     PRIVATE
-        # Assets                # If we'd created a binary data target, we'd link to it here
+        Assets                # If we'd created a binary data target, we'd link to it here
         juce::juce_audio_utils
     PUBLIC
         juce::juce_recommended_config_flags
@@ -162,4 +164,21 @@ set_target_properties("${PROJECT_NAME}" PROPERTIES FOLDER "")
 # IDEs:  Generate source groups that follow the organisation of source file directories.
 get_target_property(project_sources "${PROJECT_NAME}" SOURCES)
 
+### Take JuceHeader.h out of project_sources and handle it separately
+
+get_target_property(juce_library_code ${PROJECT_NAME} JUCE_GENERATED_SOURCES_DIRECTORY)
+set(juce_header "${juce_library_code}/JuceHeader.h")
+list(REMOVE_ITEM project_sources ${juce_header})
+source_group("JUCE Library Code" FILES "${juce_header}" "${juce_header}.rule")
+
+
 source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
+
+
+### Binary Assets Source Group:
+
+get_target_property(project_assets Assets SOURCES)
+
+foreach(project_asset ${project_assets})
+    source_group("" FILES "${project_asset}" "${project_asset}.rule")
+endforeach()
