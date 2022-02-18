@@ -170,14 +170,14 @@ set(juce_header "${juce_library_code}/JuceHeader.h")
 
 list(REMOVE_ITEM project_sources ${juce_header})
 
-source_group("JUCE Library Code" FILES "${juce_header}" "${juce_header}.rule")
+source_group("JUCE Library Code" FILES "${juce_header}")
+source_group("JUCE Library Code/CMake Rules" FILES "${juce_header}.rule")
 
 #   Generate source groups that follow the organisation of source file directories.
 source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
 
 #   Binary Assets Source Group:
-get_target_property(project_assets Assets SOURCES)
-
-foreach(project_asset ${project_assets})
-    source_group("" FILES "${project_asset}" "${project_asset}.rule")
-endforeach()
+if(TARGET Assets)
+    get_target_property(project_assets Assets SOURCES)
+    source_group("" FILES "${project_assets}")
+endif()
