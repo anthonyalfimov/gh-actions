@@ -179,5 +179,5 @@ source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
 #   Binary Assets Source Group:
 if(TARGET Assets)
     get_target_property(project_assets Assets SOURCES)
-    source_group("" FILES "${project_assets}")
+    source_group("" FILES ${project_assets})
 endif()
