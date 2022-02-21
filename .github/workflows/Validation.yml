@@ -34,7 +34,7 @@ jobs:
             # Enable buildcache. Enable building a universal binary:
             cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force parallel build:
-            cmake_build_flags: "--parallel 4",
+            cmake_build_flags: "--parallel 8",
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
             pluginval_path: "pluginval.app/Contents/MacOS/pluginval"
           }
