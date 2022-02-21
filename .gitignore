@@ -3,9 +3,8 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=C++,CMake
 
 ### Project ###
-**/Builds/
-**/Build/
-Libs/*
+**/[Bb]uild*/
+/Libs/
 
 ### C++ ###
 # Prerequisites
