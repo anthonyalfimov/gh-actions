@@ -40,13 +40,6 @@ jobs:
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
             pluginval_path: "pluginval.app/Contents/MacOS/pluginval"
           }
-        - {
-            name: 'Windows Latest',
-            os: windows-latest,
-            gen: 'MSVC',    # CMake generator
-            pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_Windows.zip",
-            pluginval_path: "./pluginval.exe"
-          }
 
     # Steps run in sequence. Each step runs in its own process in the runner environment and has access to the workspace and filesystem
     # NB! Because steps run in their own process, changes to environment variables are not preserved between steps
@@ -55,14 +48,18 @@ jobs:
     - name: Checkout code 
       uses: actions/checkout@v2
 
-    # Use the buildcache compiler cache to speed up builds
-    # Note: currently we are not configuring buildcache to work on Windows
-    # Details: https://github.com/mbitsnbites/buildcache/blob/master/doc/usage.md#using-with-visual-studio--msbuild
-    - name: Enable buildcache
+    # ccache does not support Windows
+    - name: Enable ccache
       if: runner.os != 'Windows'
-      uses: mikehardy/buildcache-action@v1
+      uses: hendrikmuhs/ccache-action@v1
       with:
-        cache_key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+        key: TB-${{ runner.os }}-${{ env.BUILD_TYPE }}
+
+    - name: Set up ccache
+      if: runner.os != 'Windows'
+      run: |
+        ln -s ccache /usr/local/bin/clang
+        ln -s ccache /usr/local/bin/clang++
 
     # Set up the dependency cache to be updated for every new commit
     # We include the CMake generator name in the cache key. This helps avoiding cache conflicts when switching generators
@@ -70,8 +67,8 @@ jobs:
       uses: actions/cache@v2
       with:
         path: Libs
-        key: libs-${{ runner.os }}-${{ matrix.config.gen }}-${{ github.sha }}
-        restore-keys: libs-${{ runner.os }}-${{ matrix.config.gen }}-
+        key: libs-TB-${{ runner.os }}-${{ matrix.config.gen }}-${{ github.sha }}
+        restore-keys: libs-TB-${{ runner.os }}-${{ matrix.config.gen }}-
 
     - name: Configure CMake
       run: cmake -B Build ${{ matrix.config.cmake_config_flags }}
