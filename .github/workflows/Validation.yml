@@ -32,7 +32,7 @@ jobs:
             os: macos-latest,
             gen: 'make',   # CMake generator
             # Enable buildcache. Enable building a universal binary:
-            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=buildcache -D CMAKE_CXX_COMPILER_LAUNCHER=buildcache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
+            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64",
             # Force parallel build:
             cmake_build_flags: "--parallel 4",
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
@@ -56,11 +56,11 @@ jobs:
     # Use the buildcache compiler cache to speed up builds
     # Note: currently we are not configuring buildcache to work on Windows
     # Details: https://github.com/mbitsnbites/buildcache/blob/master/doc/usage.md#using-with-visual-studio--msbuild
-    - name: Enable buildcache
+    - name: Enable ccache
       if: runner.os != 'Windows'
-      uses: mikehardy/buildcache-action@v1
+      uses: hendrikmuhs/ccache-action@v1
       with:
-        cache_key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
+        key: ${{ runner.os }}-${{ env.BUILD_TYPE }}
 
     # Set up the dependency cache to be updated for every new commit
     # We include the CMake generator name in the cache key. This helps avoiding cache conflicts when switching generators
