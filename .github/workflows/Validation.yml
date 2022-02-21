@@ -1,6 +1,9 @@
 name: Validation
 
 on:
+  # NOTE: Include "[no ci]", "[skip ci]", or "[ci skip]" in the commit message
+  #       to prevent push and pull_request events from triggering workflows.
+
   push:
 
   # By default, only `opened`, `synchronize`, and `reopened` activity types will trigger the workflow
@@ -30,9 +33,9 @@ jobs:
             name: 'MacOS Latest',
             os: macos-latest,
             gen: 'Xcode',   # CMake generator
-            # Use Xcode generator for faster builds. Enable building a universal binary. Set the minimum targeted MacOS version:
+            # Use Xcode generator for faster builds. Enable building universal binaries. Set the minimum MacOS target:
             cmake_config_flags: "-G Xcode -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64 -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13",
-            # Force Xcode to use compilers from the PATH to enable buildcache. Supress excessively verbose xcodebuild output:
+            # Force Xcode to use compilers from the PATH to enable buildcache. Suppress excessively verbose xcodebuild output:
             cmake_build_flags: "-- CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ -quiet",
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
             pluginval_path: "pluginval.app/Contents/MacOS/pluginval"
@@ -74,7 +77,7 @@ jobs:
       run: cmake -B Build ${{ matrix.config.cmake_config_flags }}
 
     - name: Build
-      run: cmake --build Build --config ${{ env.BUILD_TYPE }} --parallel 4 ${{ matrix.config.cmake_build_flags }}
+      run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
 
     # Note: currently pluginval fails to validate AU plugins from CLI
     # Details: https://github.com/Tracktion/pluginval/issues/39

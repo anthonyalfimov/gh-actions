@@ -92,7 +92,8 @@ juce_add_plugin("${PROJECT_NAME}"
                                                 # kAudioUnitType_MusicEffect, kAudioUnitType_OfflineEffect, kAudioUnitType_Output,
                                                 # kAudioUnitType_Panner
 
-    COPY_PLUGIN_AFTER_BUILD TRUE)               # Should the plugin be installed to a default location after building?
+    COPY_PLUGIN_AFTER_BUILD FALSE)              # Should the plugin be installed to a default location after building?
+                                                # NOTE: Writing to the default install locations might require administrator privileges on Windows.
 
 # Set the C++ language standard requirenment for the "shared code" library target.
 # Setting this to PUBLIC ensures that all dependent targets will inherit the specified C++ standard.
@@ -103,13 +104,14 @@ get_property(project_targets DIRECTORY "${PROJECT_SOURCE_DIR}" PROPERTY BUILDSYS
 
 set_target_properties(${project_targets} PROPERTIES CXX_EXTENSIONS OFF)
 
+# Add the subdirectory with source files.
+add_subdirectory(Source)
+
 # `juce_generate_juce_header` will create a JuceHeader.h for a given target, which will be generated
 # into your build tree. The include path for this header will be automatically added to the target.
+# NOTE: JuceHeader.h is generated when the target is built.
 
 # juce_generate_juce_header("${PROJECT_NAME}")
-
-# Add the subdirectory with source files
-add_subdirectory(Source)
 
 # `target_compile_definitions` adds some preprocessor definitions to our target.
 # JUCE modules also make use of compile definitions to switch certain features on/off,
@@ -124,14 +126,13 @@ target_compile_definitions("${PROJECT_NAME}"
         JUCE_USE_CURL=0     # If you remove this, add `NEEDS_CURL TRUE` to the `juce_add_plugin` call
         JUCE_VST3_CAN_REPLACE_VST2=0)
 
-# If your target needs extra binary assets, you can add them here. The first argument is the name of
-# a new static library target that will include all the binary resources. There is an optional
-# `NAMESPACE` argument that can specify the namespace of the generated binary data class. Finally,
-# the SOURCES argument should be followed by a list of source files that should be built into the
-# static library. These source files can be of any kind (wav data, images, fonts, icons etc.).
-# Conversion to binary-data will happen when your target is built.
+# If your target needs extra binary assets, you can add them here.
+# NOTE: Conversion to binary-data happens when the target is built.
 
-# juce_add_binary_data(Assets SOURCES ...)
+# juce_add_binary_data(Assets       # Name of a static library target that will include all the binary resources
+    # HEADER_NAME ...               # Name of the generated header. "BinaryData.h" is used by default
+    # NAMESPACE ...                 # Namespace of the generated binary data class. "BinaryData" is used by default
+#   SOURCES ...)                    # List of asset files of any kind that should be built into the static library
 
 # `target_link_libraries` links libraries and JUCE modules to other libraries or executables. Here,
 # we're linking our executable target to the `juce::juce_audio_utils` module. Inter-module
@@ -149,8 +150,8 @@ target_link_libraries("${PROJECT_NAME}"
 
 ### IDE Generator post-config ###
 
-# IDEs:  Place source groups for project targets into a "Targets" folder (to reduce visual clutter)
-# Xcode: Generate build schemes for project targets
+# IDEs:  Place source groups for project targets into a "Targets" folder (to reduce visual clutter).
+# Xcode: Generate build schemes for project targets.
 set_target_properties(${project_targets} PROPERTIES
     FOLDER "Targets"
     XCODE_GENERATE_SCHEME ON)
@@ -159,7 +160,24 @@ set_target_properties(${project_targets} PROPERTIES
 #        to the top level.
 set_target_properties("${PROJECT_NAME}" PROPERTIES FOLDER "")
 
-# IDEs:  Generate source groups that follow the organisation of source file directories.
+# IDEs:  Organise source file grouping.
 get_target_property(project_sources "${PROJECT_NAME}" SOURCES)
 
+#   If JuceHeader.h is generated, remove it from the source file list and handle it individually.
+get_target_property(juce_library_code "${PROJECT_NAME}" JUCE_GENERATED_SOURCES_DIRECTORY)
+set(juce_header "${juce_library_code}/JuceHeader.h")
+
+list(REMOVE_ITEM project_sources "${juce_header}")
+
+#   Place JuceHeader.h and the associated CMake Rule file into a "JUCE Library Code" folder.
+source_group("JUCE Library Code" FILES "${juce_header}")
+source_group("JUCE Library Code/CMake Rules" FILES "${juce_header}.rule")
+
+#   Generate source groups that follow the organisation of source file directories.
 source_group(TREE "${PROJECT_SOURCE_DIR}/Source" FILES ${project_sources})
+
+#   Place Binary Data related source files into the root of their target folder
+if(TARGET Assets)
+    get_target_property(project_assets Assets SOURCES)
+    source_group("" FILES ${project_assets})
+endif()
