@@ -7,7 +7,7 @@ project(PluginTemplate VERSION 0.0.1)
 
 ### Dependency versions ###
 
-set(LIB_JUCE_TAG "6.1.6")
+set(LIB_JUCE_TAG "7.0.0")
 
 
 ### IDE Generator pre-config ###
