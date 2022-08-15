@@ -83,7 +83,7 @@ jobs:
       shell: bash
       working-directory: Build
       run: |
-        cp *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plugins/Components
+        cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plugins/Components
 
     # Note: currently pluginval fails to validate AU plugins from CLI
     # Details: https://github.com/Tracktion/pluginval/issues/39
