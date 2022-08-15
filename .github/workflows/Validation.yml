@@ -94,7 +94,7 @@ jobs:
           echo ""
           echo "Validating AU..."
           sudo cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
-          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/*.component/Contents/MacOS/*
+          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/
         fi
     #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
