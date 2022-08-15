@@ -83,7 +83,7 @@ jobs:
       shell: bash
       working-directory: Build
       run: |
-        cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
+        cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component ~/Library/Audio/Plug-Ins/Components
 
       # mkdir -p ~/Library/Audio/Plugins/Components
 
