@@ -104,9 +104,8 @@ jobs:
         if [ "$RUNNER_OS" == "macOS" ]; then
           echo ""
           echo "Validating AU..."
-          mkdir -p ~/Library/Audio/Plug-Ins/Components
-          cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component ~/Library/Audio/Plug-Ins/Components
-          ${{ matrix.config.pluginval_path }} --validate ~/Library/Audio/Plug-Ins/Components/*.component
+          sudo cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
+          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/*.component
         fi
     #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
