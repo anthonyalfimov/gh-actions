@@ -78,17 +78,6 @@ jobs:
     - name: Build
       run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
 
-    - name: Install AU plugin
-      if: runner.os == 'macOS'
-      shell: bash
-      working-directory: Build
-      run: |
-        mkdir -p ~/Library/Audio/Plug-Ins/Components
-        cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component ~/Library/Audio/Plug-Ins/Components
-
-      # mkdir -p ~/Library/Audio/Plugins/Components
-
-
     # Note: currently pluginval fails to validate AU plugins from CLI
     # Details: https://github.com/Tracktion/pluginval/issues/39
     - name: Validate
@@ -105,7 +94,7 @@ jobs:
           echo ""
           echo "Validating AU..."
           sudo cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
-          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/*.component
+          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/*.component/Contents/MacOS/*
         fi
     #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
