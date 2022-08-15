@@ -34,7 +34,7 @@ jobs:
             os: macos-latest,
             gen: 'make',   # CMake generator
             # Use ccache. Enable building universal binaries. Set the minimum MacOS target:
-            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64 -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13",
+            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64 -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13 -D JUCE_COPY_PLUGIN_AFTER_BUILD=ON",
             # Enable parallel builds with make:
             cmake_build_flags: "--parallel 6",
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
@@ -88,7 +88,10 @@ jobs:
       run: |
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
-        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
+        shopt -s extglob  # Enable bash extended globbing
+        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component)
+
+    #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
     # To enable AU validation, use the following commands to run pluginval:
     #   shopt -s extglob  # Enable bash extended globbing
