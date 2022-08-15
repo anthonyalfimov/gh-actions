@@ -34,7 +34,7 @@ jobs:
             os: macos-latest,
             gen: 'make',   # CMake generator
             # Use ccache. Enable building universal binaries. Set the minimum MacOS target:
-            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64 -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13 -D JUCE_COPY_PLUGIN_AFTER_BUILD=ON",
+            cmake_config_flags: "-D CMAKE_C_COMPILER_LAUNCHER=ccache -D CMAKE_CXX_COMPILER_LAUNCHER=ccache -D CMAKE_OSX_ARCHITECTURES=arm64\\;x86_64 -D CMAKE_OSX_DEPLOYMENT_TARGET=10.13",
             # Enable parallel builds with make:
             cmake_build_flags: "--parallel 6",
             pluginval_link: "https://github.com/Tracktion/pluginval/releases/latest/download/pluginval_macOS.zip",
@@ -77,6 +77,13 @@ jobs:
 
     - name: Build
       run: cmake --build Build --config ${{ env.BUILD_TYPE }} ${{ matrix.config.cmake_build_flags }}
+
+    - name: Install AU plugin
+      if: runner.os == 'macOS'
+      shell: bash
+      working-directory: Build
+      run: |
+        cp *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plugins/Components
 
     # Note: currently pluginval fails to validate AU plugins from CLI
     # Details: https://github.com/Tracktion/pluginval/issues/39
