@@ -108,12 +108,13 @@ jobs:
       working-directory: Build
       run: |
         shopt -s extglob  # Enable bash extended globbing
-        mkdir build_artefacts
-        mv *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component) build_artefacts/
-        zip -r build-${{ runner.os }}.zip build_artefacts
+        mkdir build-${{ runner.os }}
+        mv *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component) build-${{ runner.os }}/
+
+    #zip -r build-${{ runner.os }}.zip build-${{ runner.os }}
 
     - name: Archive build artefacts
       uses: actions/upload-artifact@v3
       with:
         name: build-${{ runner.os }}
-        path: Build/build-${{ runner.os }}.zip
+        path: Build/build-${{ runner.os }}
