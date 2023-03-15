@@ -132,7 +132,7 @@ jobs:
       - name: Report folder contents
         shell: bash
         run: |
-          ls -lA
+          ls -lR
 
       # - name: Publish release
       #   uses: softprops/action-gh-release@v1
