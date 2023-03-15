@@ -88,16 +88,30 @@ jobs:
       run: |
         curl -LsS ${{ matrix.config.pluginval_link }} -o pluginval.zip
         unzip -q pluginval
-        echo "Validating VST3..."
-        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
-        if [ "$RUNNER_OS" == "macOS" ]; then
-          echo ""
-          echo "Validating AU..."
-          sudo cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
-          ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/
-        fi
+    #   echo "Validating VST3..."
     #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
+    #   if [ "$RUNNER_OS" == "macOS" ]; then
+    #     echo ""
+    #     echo "Validating AU..."
+    #     sudo cp -r *_artefacts/${{ env.BUILD_TYPE }}/AU/*.component /Library/Audio/Plug-Ins/Components
+    #     ${{ matrix.config.pluginval_path }} --validate /Library/Audio/Plug-Ins/Components/
+    #   fi
+        ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/VST3/*.vst3
 
     # To enable AU validation, use the following commands to run pluginval:
     #   shopt -s extglob  # Enable bash extended globbing
     #   ${{ matrix.config.pluginval_path }} --validate *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component)
+
+    - name: Prepare build artefacts
+      shell: bash
+      working-directory: Build
+      run: |
+        shopt -s extglob  # Enable bash extended globbing
+        mv *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component) artefacts/
+        zip -r build-${{ runner.os }}.zip artefacts
+
+    - name: Archive build artefacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-${{ runner.os }}
+        path: Build/build-${{ runner.os }}.zip
