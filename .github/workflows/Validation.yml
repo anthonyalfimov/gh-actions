@@ -134,3 +134,4 @@ jobs:
         with:
           prerelease: true
           generate_release_notes: true
+          files: */*.zip
