@@ -129,10 +129,14 @@ jobs:
       - name: Download artefacts
         uses: actions/download-artifact@v3
 
-      - name: Report folder contents
+      - name: Prepare archives
         shell: bash
         run: |
-          ls -lR
+          for build in *
+          do
+            zip -rq "${build}.zip" "$build"
+          done
+          ls -l
 
       # - name: Publish release
       #   uses: softprops/action-gh-release@v1
