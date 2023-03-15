@@ -5,7 +5,6 @@ on:
   #       to prevent push and pull_request events from triggering workflows.
 
   push:
-    branches: [main]
     tags: ['*']
 
   # By default, only `opened`, `synchronize`, and `reopened` activity types will trigger the workflow
