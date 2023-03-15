@@ -1,4 +1,4 @@
-name: Validation
+name: Build and Validate
 
 on:
   # NOTE: Include "[no ci]", "[skip ci]", or "[ci skip]" in the commit message
@@ -53,7 +53,7 @@ jobs:
     steps:
     
     - name: Checkout code 
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Use the ccache compiler cache to speed up builds
     # Note: ccache does not support Windows
@@ -66,7 +66,7 @@ jobs:
     # Set up the dependency cache to be updated for every new commit
     # We include the CMake generator name in the cache key. This helps avoiding cache conflicts when switching generators
     - name: Cache dependencies
-      uses: actions/cache@v2
+      uses: actions/cache@v3
       with:
         path: Libs
         key: libs-${{ runner.os }}-${{ matrix.config.gen }}-${{ github.sha }}
@@ -108,8 +108,9 @@ jobs:
       working-directory: Build
       run: |
         shopt -s extglob  # Enable bash extended globbing
-        mv *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component) artefacts/
-        zip -r build-${{ runner.os }}.zip artefacts
+        mkdir build_artefacts
+        mv *_artefacts/${{ env.BUILD_TYPE }}/@(VST3|AU)/*.@(vst3|component) build_artefacts/
+        zip -r build-${{ runner.os }}.zip build_artefacts
 
     - name: Archive build artefacts
       uses: actions/upload-artifact@v3
